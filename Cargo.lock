@@ -3,5 +3,13 @@
 version = 3
 
 [[package]]
-name = "chip8"
+name = "core"
+version = "0.1.0"
+
+[[package]]
+name = "gui"
+version = "0.1.0"
+
+[[package]]
+name = "wasm"
 version = "0.1.0"
