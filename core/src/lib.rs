@@ -91,7 +91,7 @@ impl Emu {
             ((op & 0xF000) >> 12) as u8,
             ((op & 0xF00) >> 8) as u8,
             ((op & 0xF0) >> 4) as u8,
-            (op & 0xF) as u8
+            (op & 0xF) as u8,
         ) {
             // Clears the screen.
             (0, 0, 0xE, 0) => {
@@ -252,18 +252,18 @@ impl Emu {
             // NOTE: sprite pixels that are set flip the color of the corresponding screen pixel,
             // while unset sprite pixels do nothing
             (0xD, x, y, n) => {
-                let mut flipped = false;
+                let (x, y, mut flipped) = (self.reg[x as usize], self.reg[y as usize], false);
                 for i in 0..n {
                     let colors = self.mem[(self.i_reg + i as u16) as usize];
                     for j in 0..8 {
                         // check if the sprite is set; otherwise, do nothing.
                         if colors & (0b1000_0000 >> j) > 0 {
                             // screen overflow
-                            let x = (x + j) as usize % SCREEN_W;
-                            let y = (y + i) as usize % SCREEN_H;
+                            let (x, y) = ((x + j) as usize % SCREEN_W, (y + i) as usize % SCREEN_H);
 
                             // 2D -> 1D
                             let idx = x + y * SCREEN_W;
+
                             flipped |= self.sc[idx];
                             self.sc[idx] ^= true;
                         }
