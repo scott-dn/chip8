@@ -1,6 +1,6 @@
 [workspace]
 members = [
-  "core",
-  "gui",
-  "wasm",
+    "core",
+    "gui",
+    "wasm",
 ]
