@@ -62,6 +62,10 @@ impl Emu {
         self.mem[STR_ADDR as usize..STR_ADDR as usize + data.len()].copy_from_slice(data);
     }
 
+    pub fn display(&self) -> &[bool] {
+        &self.sc
+    }
+
     pub fn key_press(&mut self, idx: usize, pressed: bool) {
         self.keys[idx] = pressed;
     }
@@ -81,11 +85,13 @@ impl Emu {
 
     pub fn exec(&mut self) {
         let op = (self.mem[self.pc as usize] as u16) << 8 | self.mem[(self.pc + 1) as usize] as u16;
+        self.pc += 2;
+
         match (
-            (op & 0xF000 >> 12) as u8,
-            (op & 0xF00 >> 8) as u8,
-            (op & 0xF0 >> 4) as u8,
-            (op & 0xF) as u8,
+            ((op & 0xF000) >> 12) as u8,
+            ((op & 0xF00) >> 8) as u8,
+            ((op & 0xF0) >> 4) as u8,
+            (op & 0xF) as u8
         ) {
             // Clears the screen.
             (0, 0, 0xE, 0) => {
@@ -257,7 +263,7 @@ impl Emu {
                             let y = (y + i) as usize % SCREEN_H;
 
                             // 2D -> 1D
-                            let idx: usize = x + y * SCREEN_W;
+                            let idx = x + y * SCREEN_W;
                             flipped |= self.sc[idx];
                             self.sc[idx] ^= true;
                         }
@@ -345,9 +351,7 @@ impl Emu {
                 }
             }
 
-            _ => unimplemented!("Unsupported opcode: "),
+            _ => unimplemented!("Unsupported opcode: {:#04x}", op),
         }
-
-        self.pc += 2;
     }
 }
