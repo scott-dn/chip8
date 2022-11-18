@@ -62,6 +62,23 @@ impl Emu {
         self.mem[STR_ADDR as usize..STR_ADDR as usize + data.len()].copy_from_slice(data);
     }
 
+    pub fn key_press(&mut self, idx: usize, pressed: bool) {
+        self.keys[idx] = pressed;
+    }
+
+    pub fn tick_timers(&mut self) {
+        if self.d_timer > 0 {
+            self.d_timer -= 1;
+        }
+
+        if self.s_timer > 0 {
+            if self.s_timer == 1 {
+                println!("S_TIMER");
+            }
+            self.s_timer -= 1;
+        }
+    }
+
     pub fn exec(&mut self) {
         let op = (self.mem[self.pc as usize] as u16) << 8 | self.mem[(self.pc + 1) as usize] as u16;
         match (
