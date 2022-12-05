@@ -58,6 +58,20 @@ impl Emu {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.pc = STR_ADDR;
+        self.mem = [0; MEM_SIZE];
+        self.mem[..RESERVED_SPRITE_SIZE].copy_from_slice(&RESERVED_SPRITES);
+        self.sc = [false; SCREEN_W * SCREEN_H];
+        self.reg = [0; REG_SIZE];
+        self.i_reg = 0;
+        self.sp = 0;
+        self.stack = [0; STACK_SIZE];
+        self.keys = [false; KEY_SIZE];
+        self.d_timer = 0;
+        self.s_timer = 0;
+    }
+
     pub fn load(&mut self, data: &[u8]) {
         self.mem[STR_ADDR as usize..STR_ADDR as usize + data.len()].copy_from_slice(data);
     }
