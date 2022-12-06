@@ -1,4 +1,4 @@
-use core::{Emu, SCREEN_H, SCREEN_W};
+use core::{Emu, SCREEN_W};
 use js_sys::Uint8Array;
 use wasm_bindgen::{prelude::wasm_bindgen, JsCast};
 use web_sys::{window, CanvasRenderingContext2d, HtmlCanvasElement, KeyboardEvent};
@@ -47,15 +47,14 @@ impl WasmEmu {
     }
 
     #[wasm_bindgen]
-    pub fn keypress(&mut self, evt: KeyboardEvent, pressed: bool) {
-        let key = evt.key();
-        if let Some(k) = key2btn(&key) {
+    pub fn key_press(&mut self, event: KeyboardEvent, pressed: bool) {
+        if let Some(k) = key2btn(&event.key()) {
             self.emu.key_press(k, pressed);
         }
     }
 
     #[wasm_bindgen]
-    pub fn load_game(&mut self, data: Uint8Array) {
+    pub fn load(&mut self, data: Uint8Array) {
         self.emu.load(&data.to_vec());
     }
 
@@ -63,7 +62,7 @@ impl WasmEmu {
     pub fn draw_screen(&self, scale: usize) {
         for (i, &pixel) in self.emu.display().iter().enumerate() {
             if pixel {
-                let (x, y) = (i % SCREEN_W, i / SCREEN_H);
+                let (x, y) = (i % SCREEN_W, i / SCREEN_W);
                 self.ctx.fill_rect(
                     (x * scale) as f64,
                     (y * scale) as f64,
